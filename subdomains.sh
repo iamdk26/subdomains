@@ -14,10 +14,13 @@ echo "🔁 Started assetfinder"
 assetfinder -subs-only $domain > output_passive_subdomains/$domain/assetfinder.txt
 printf "✅ Total assetfinder-subdomains :  $(wc -l output_passive_subdomains/$domain/assetfinder.txt)\n\n"
 
-
 echo "🔁 Started abuseipdb"
 curl -s "https://www.abuseipdb.com/whois/$domain" -H "user-agent: firefox" -b "abuseipdb_session=" | grep -E '<li>\w.*</li>' | sed -E 's/<\/?li>//g' | sed -e "s/$/.$domain/" | anew output_passive_subdomains/$domain/abuseipdb.txt |
 printf "✅ Total abuseipdb-subdomains :  $(wc -l output_passive_subdomains/$domain/abuseipdb.txt)\n\n"
+
+echo "🔁 Started bufferover"
+curl -s "https://dns.bufferover.run/dns?q=.$domain" | grep $domain | awk -F, '{gsub("\"", "", $2); print $2}' | anew output_passive_subdomains/$domain/bufferover.txt
+printf "✅ Total bufferover-subdomains :  $(wc -l output_passive_subdomains/$domain/bufferover.txt)\n\n"
 
 echo "🔁 Start riddler.io"
 curl -s "https://riddler.io/search/exportcsv?q=pld:$domain" | grep -Po "(([\w.-]*)\.([\w]*)\.([A-z]))\w+" | sort -u > output_passive_subdomains/$domain/riddler.txt
@@ -53,6 +56,7 @@ echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 printf "Total subfinder-subdomains   :  $(wc -l output_passive_subdomains/$domain/subfinder.txt)\n"
 printf "Total assetfinder-subdomains :  $(wc -l output_passive_subdomains/$domain/assetfinder.txt)\n"
 printf "Total abuseipdb-subdomains :  $(wc -l output_passive_subdomains/$domain/abuseipdb.txt)\n"
+printf "Total bufferover-subdomains :  $(wc -l output_passive_subdomains/$domain/bufferover.txt)\n"
 printf "Total riddler-subdomains     :  $(wc -l output_passive_subdomains/$domain/riddler.txt)\n"
 printf "Total amass-subdomains       :  $(wc -l output_passive_subdomains/$domain/amass.txt)\n"
 printf "Total WaybackMachine         :  $(wc -l output_passive_subdomains/$domain/WaybackMachine.txt)\n"
